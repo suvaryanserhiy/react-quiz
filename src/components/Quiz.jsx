@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import quizCompleteImg from '../assets/quiz-complete.png';
 import DUMMYQUESTIONS from '../questions';
 
 //Fisher-Yates algorithms
@@ -14,13 +15,22 @@ function shuffleArray(array) {
 export default function Quiz() {
 	const [userAnswers, setUserAnswer] = useState([]);
 	const activeQuestionIndex = userAnswers.length;
-
 	const currentQuestion = DUMMYQUESTIONS[activeQuestionIndex];
-	const shuffledAnswers = shuffleArray(currentQuestion.answers);
+	const quizIsComplete = activeQuestionIndex === DUMMYQUESTIONS.length;
 
 	function handleSelectAnswer(selectedAnswer) {
 		setUserAnswer((prevUserAnswers) => [...prevUserAnswers, selectedAnswer]);
 	}
+	if (quizIsComplete) {
+		return (
+			<div id='summary'>
+				<img src={quizCompleteImg} alt='Trophy icon' />
+				<h2>Quiz Completed!</h2>
+			</div>
+		);
+	}
+
+	const shuffledAnswers = shuffleArray(currentQuestion.answers);
 
 	return (
 		<div id='quiz'>
