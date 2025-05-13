@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import quizCompleteImg from '../assets/quiz-complete.png';
 import DUMMYQUESTIONS from '../questions';
+import QuestionTimer from './QuestionTimer';
 
 //Fisher-Yates algorithms
 function shuffleArray(array) {
@@ -18,9 +19,17 @@ export default function Quiz() {
 	const currentQuestion = DUMMYQUESTIONS[activeQuestionIndex];
 	const quizIsComplete = activeQuestionIndex === DUMMYQUESTIONS.length;
 
-	function handleSelectAnswer(selectedAnswer) {
+	const handleSelectAnswer = useCallback(function handleSelectAnswer(
+		selectedAnswer
+	) {
 		setUserAnswer((prevUserAnswers) => [...prevUserAnswers, selectedAnswer]);
-	}
+	},
+	[]);
+
+	const handleSkipAnswer = useCallback(
+		() => handleSelectAnswer(null),
+		[handleSelectAnswer]
+	);
 	if (quizIsComplete) {
 		return (
 			<div id='summary'>
@@ -35,6 +44,11 @@ export default function Quiz() {
 	return (
 		<div id='quiz'>
 			<div id='question'>
+				<QuestionTimer
+					key={activeQuestionIndex} // react will remouint this component whenever key is changed
+					timeout={15000}
+					onTimeout={() => handleSkipAnswer()}
+				/>
 				<h2>{currentQuestion.text}</h2>
 				<ul id='answers'>
 					{shuffledAnswers.map((answer) => (
